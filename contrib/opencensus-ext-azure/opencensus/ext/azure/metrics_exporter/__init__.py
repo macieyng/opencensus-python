@@ -62,6 +62,7 @@ class MetricsExporter(TransportMixin, ProcessorMixin):
         self.exporter_thread = None
         # For redirects
         self._consecutive_redirects = 0  # To prevent circular redirects
+        self.namespace = self.options.namespace
         super(MetricsExporter, self).__init__()
 
     def export_metrics(self, metrics):
@@ -110,8 +111,8 @@ class MetricsExporter(TransportMixin, ProcessorMixin):
         """Convert a metric's OC time series to list of Azure data points."""
         data_points = []
         for point in time_series.points:
-            # TODO: Possibly encode namespace in name
-            data_point = DataPoint(ns=metric_descriptor.name,
+            # For backwards compability
+            data_point = DataPoint(ns=self.namespace or metric_descriptor.name,
                                    name=metric_descriptor.name,
                                    value=point.value.value)
             data_points.append(data_point)
