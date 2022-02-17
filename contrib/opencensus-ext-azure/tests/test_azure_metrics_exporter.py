@@ -129,10 +129,27 @@ class TestAzureMetricsExporter(unittest.TestCase):
         self.assertTrue('metrics' in post_body)
         self.assertTrue('properties' in post_body)
 
-    def test_create_data_points(self):
+    def test_create_data_points_with_namespace(self):
         metric = create_metric()
         exporter = MetricsExporter(
-            instrumentation_key='12345678-1234-5678-abcd-12345678abcd'
+            instrumentation_key='12345678-1234-5678-abcd-12345678abcd',
+            namespace="test-namespace"
+        )
+        data_points = exporter._create_data_points(metric.time_series[0],
+                                                   metric.descriptor)
+
+        self.assertEqual(len(data_points), 1)
+        data_point = data_points[0]
+        self.assertEqual(data_point.ns, exporter.namespace)
+        self.assertEqual(data_point.name, metric.descriptor.name)
+        self.assertEqual(data_point.value,
+                         metric.time_series[0].points[0].value.value)
+
+    def test_create_data_points_no_namespace(self):
+        # for backwards compability
+        metric = create_metric()
+        exporter = MetricsExporter(
+            instrumentation_key='12345678-1234-5678-abcd-12345678abcd',
         )
         data_points = exporter._create_data_points(metric.time_series[0],
                                                    metric.descriptor)
