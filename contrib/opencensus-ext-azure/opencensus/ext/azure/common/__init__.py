@@ -118,6 +118,7 @@ class Options(BaseObject):
         logging_sampling_rate=1.0,  # Used by log exporter, controls sampling
         max_batch_size=100,
         minimum_retry_interval=60,  # minimum retry interval in seconds
+        namespace=None,
         proxies=None,  # string maps url schemes to the url of the proxies
         queue_capacity=8192,
         storage_maintenance_period=60,
